@@ -4,6 +4,7 @@ package com.example.blog.Controller;
 import com.example.blog.dto.LoginRequest;
 import com.example.blog.dto.RegisterRequest;
 import com.example.blog.service.AuthService;
+import com.example.blog.service.AuthenticationResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,15 +19,13 @@ public class AuthController {
     private AuthService authService;
 
     @PostMapping("/signup")
-    public ResponseEntity signup(@RequestBody RegisterRequest registerRequest){
-        authService.signUp(registerRequest);
+    public ResponseEntity signup(@RequestBody RegisterRequest registerRequest) {
+        authService.signup(registerRequest);
         return new ResponseEntity(HttpStatus.OK);
     }
 
-
     @PostMapping("/login")
-    public String login(@RequestBody LoginRequest loginRequest){
+    public AuthenticationResponse login(@RequestBody LoginRequest loginRequest) {
         return authService.login(loginRequest);
-
     }
 }

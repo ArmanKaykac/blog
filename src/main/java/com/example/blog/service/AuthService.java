@@ -19,7 +19,7 @@ import java.util.Optional;
 public class AuthService {
 
     @Autowired
-    private IUserRepository IUserRepository;
+    private IUserRepository iuserRepository;
     @Autowired
     private PasswordEncoder passwordEncoder;
     @Autowired
@@ -27,25 +27,25 @@ public class AuthService {
     @Autowired
     private JwtProvider jwtProvider;
 
-    public void signUp(RegisterRequest registerRequest) {
-        User user=new User();
+    public void signup(RegisterRequest registerRequest) {
+        User user = new User();
         user.setUserName(registerRequest.getUsername());
-        user.setPassword(encodePassword(registerRequest.getPassword()));
         user.setEmail(registerRequest.getEmail());
-        IUserRepository.save(user);
+        user.setPassword(encodePassword(registerRequest.getPassword()));
+
+        iuserRepository.save(user);
     }
 
     private String encodePassword(String password) {
-
         return passwordEncoder.encode(password);
     }
 
-    public String login(LoginRequest loginRequest) {
+    public AuthenticationResponse login(LoginRequest loginRequest) {
         Authentication authenticate = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(loginRequest.getUsername(),
-                loginRequest.getPassword()
-                ));
+                loginRequest.getPassword()));
         SecurityContextHolder.getContext().setAuthentication(authenticate);
-        return jwtProvider.generateToken(authenticate);
+        String authenticationToken = jwtProvider.generateToken(authenticate);
+        return new AuthenticationResponse(authenticationToken, loginRequest.getUsername());
     }
 
     public Optional<org.springframework.security.core.userdetails.User> getCurrentUser() {
